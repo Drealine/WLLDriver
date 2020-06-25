@@ -18,7 +18,7 @@ default API request is : https://api.weatherlink.com/v2/stations?api-key=YOURAPI
     url = http://toto.com:80/v1/current_conditions #Just replace toto.com by your IP.
     wl_apikey = NN #Create an API Key on your Weatherlink account
     wl_apisecret = NN #By creating API Key, you've also an API Secret
-    wl_stationid = NN  #Check your station ID by using the methode explain before
+    wl_stationid = NN  #Check your station ID by using the method explain before
     wl_archive_interval = 5 #Be carefull by set this because it depending on your subscription on Weatherlink.com. Please use the same that config on weewx.conf
 ```
 
