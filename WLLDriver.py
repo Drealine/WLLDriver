@@ -84,7 +84,13 @@ class WLLDriver(weewx.drivers.AbstractDevice):
 
         self.ntries = 0
 
-        self.metric_db_weewx = stn_dict['StdConvert']['target_unit']
+        self.unit_db_weewx = stn_dict['StdConvert']['target_unit']
+        self.unit_db_input_data = None
+
+        if self.unit_db_weewx == "METRIC":  self.unit_db_input_data = weewx.METRIC
+        if self.unit_db_weewx == "METRICWX":  self.unit_db_input_data = weewx.METRICWX
+        if self.unit_db_weewx == "US":  self.unit_db_input_data = weewx.US
+
 
         loginf("driver is %s" % DRIVER_NAME)
         loginf("driver version is %s" % DRIVER_VERSION)
@@ -174,14 +180,29 @@ class WLLDriver(weewx.drivers.AbstractDevice):
                                 outTemp = s['temp_last']
                                 outHumidity = s['hum_last']
                                 dewpoint = s['dew_point_last']
-                                heatindex = s['dew_point_last']
+                                rainSize = s['rain_size'] 
+                                heatindex = s['heat_index_last']
                                 windchill = s['wind_chill_last']
                                 windSpeed = s['wind_speed_avg']
                                 windDir = s['wind_dir_of_prevail']
                                 windGust = s['wind_speed_hi']
                                 windGustDir = s['wind_speed_hi_dir']
-                                rainRate = s['rain_rate_hi_mm']
-                                rain = s['rainfall_mm']
+
+                                if rainSize is not None:
+
+                                    if rainSize == 1:
+
+                                        rainRate = s['rain_rate_hi_in']
+                                        rain = s['rainfall_in']
+
+                                    elif rainSize == 2:
+
+                                        rainRate = s['rain_rate_hi_mm']
+                                        rain = s['rainfall_mm']
+
+                                    #elif rainSize == 3:
+
+                                        # What about this value ? Is not implement on weatherlink.com ?
 
                 for s in data_wl['sensors']:
 
@@ -226,55 +247,72 @@ class WLLDriver(weewx.drivers.AbstractDevice):
 
                 #logdbg("Values received in JSON from Weatherlink : %s" % log_packet_before_transformed)
 
-                if _packet_before['outTemp'] is not None:
+                if self.unit_db_input_data == weewx.METRIC or self.unit_db_input_data == weewx.METRICWX:
+
+                    if _packet_before['outTemp'] is not None:
 
                         outTemp = (float(outTemp) - 32) * 5/9
                         outTemp = round(outTemp,2)
 
-                if _packet_before['dewpoint'] is not None:
+                    if _packet_before['dewpoint'] is not None:
 
-                    dewpoint = (float(dewpoint) - 32) * 5/9
-                    dewpoint = round(dewpoint,2)
+                        dewpoint = (float(dewpoint) - 32) * 5/9
+                        dewpoint = round(dewpoint,2)
 
-                if _packet_before['heatindex'] is not None:
+                    if _packet_before['heatindex'] is not None:
 
-                    heatindex = (float(heatindex) - 32) * 5/9
-                    heatindex = round(heatindex,2)
+                        heatindex = (float(heatindex) - 32) * 5/9
+                        heatindex = round(heatindex,2)
 
-                if _packet_before['windchill'] is not None:
+                    if _packet_before['windchill'] is not None:
 
-                    windchill = (float(windchill) - 32) * 5/9
-                    windchill = round(windchill,2)
+                        windchill = (float(windchill) - 32) * 5/9
+                        windchill = round(windchill,2)
 
-                if _packet_before['inTemp'] is not None:
+                    if _packet_before['inTemp'] is not None:
 
-                    inTemp = (float(inTemp) - 32) * 5/9
-                    inTemp = round(inTemp,2)
+                        inTemp = (float(inTemp) - 32) * 5/9
+                        inTemp = round(inTemp,2)
 
-                if _packet_before['inDewpoint'] is not None:
+                    if _packet_before['inDewpoint'] is not None:
 
-                    inDewpoint = (float(inDewpoint) - 32) * 5/9
-                    inDewpoint = round(inDewpoint,2)
+                        inDewpoint = (float(inDewpoint) - 32) * 5/9
+                        inDewpoint = round(inDewpoint,2)
 
-                if _packet_before['inDewpoint'] is not None:
-                
-                    barometer = float(barometer) * 33.864
-                    barometer = round(barometer,2)
+                    if _packet_before['inDewpoint'] is not None:
+                    
+                        barometer = float(barometer) * 33.864
+                        barometer = round(barometer,2)
 
-                if _packet_before['pressure'] is not None:
+                    if _packet_before['pressure'] is not None:
 
-                    pressure = float(pressure) * 33.864
-                    pressure = round(pressure,2)
+                        pressure = float(pressure) * 33.864
+                        pressure = round(pressure,2)
+
 
                 if _packet_before['windSpeed'] is not None:
 
-                    windSpeed = float(windSpeed) * 1.609344
-                    windSpeed = round(windSpeed,2)
+                    if self.unit_db_input_data == weewx.METRIC:
+
+                        windSpeed = float(windSpeed) * 1.609344
+                        windSpeed = round(windSpeed,2)
+
+                    if self.unit_db_input_data == weewx.METRICWX:
+
+                        windSpeed = float(windSpeed) / 2.237
+                        windSpeed = round(windSpeed,2)
 
                 if _packet_before['windGust'] is not None:
 
-                    windGust = float(windGust) * 1.609344
-                    windGust = round(windGust,2)
+                    if self.unit_db_input_data == weewx.METRIC:
+
+                        windGust = float(windGust) * 1.609344
+                        windGust = round(windGust,2)
+
+                    if self.unit_db_input_data == weewx.METRICWX:
+
+                        windGust = float(windGust) / 2.237
+                        windGust = round(windGust,2)
 
                 if _packet_before['windDir'] is not None:
 
@@ -284,19 +322,21 @@ class WLLDriver(weewx.drivers.AbstractDevice):
 
                     windGustDir = round(windGustDir,0)
 
-                # Do this for weewx table in METRIC
-
                 if _packet_before['rain'] is not None:
 
-                    rain = float(rain) / 10
+                    if rainSize == 2 and self.unit_db_input_data == weewx.METRIC:
 
-                if _packet_before['rain'] is not None:
+                        rain = float(rain) / 10
 
-                    rainRate = float(rainRate) / 10
+                if _packet_before['rainRate'] is not None:
+
+                    if rainSize == 2 and self.unit_db_input_data == weewx.METRIC:
+
+                        rainRate = float(rainRate) / 10
 
               
                 wl_packet = {'dateTime': int(start_timestamp),
-                                   'usUnits': weewx.METRIC,
+                                   'usUnits': self.unit_db_input_data,
                                    'interval': self.wl_archive_interval,
                                    'outTemp': outTemp,
                                    'outHumidity': outHumidity,
@@ -351,10 +391,9 @@ class WLLDriver(weewx.drivers.AbstractDevice):
 
             else:
 
-                for s in data['data']['conditions']:
+                rain_this_period = 0
 
-                    rainmultiplier = 0.2 # Set this value for European Rain Collector
-                    rain_this_period = 0
+                for s in data['data']['conditions']:
 
                     # keep these in the order defined in the Davis doc for readability
                     if s['data_structure_type'] == 1 :
@@ -369,6 +408,7 @@ class WLLDriver(weewx.drivers.AbstractDevice):
                         windGustDir = s['wind_dir_scalar_avg_last_2_min']
                         rainRate = s['rain_rate_last']
                         rainFall_Daily = s['rainfall_daily']
+                        rainSize = s['rain_size']
 
                     elif s['data_structure_type'] == 2 :
                         # temp_1 to 4
@@ -384,6 +424,20 @@ class WLLDriver(weewx.drivers.AbstractDevice):
                         inTemp = s['temp_in']
                         inHumidity = s['hum_in']
                         inDewpoint = s['dew_point_in']
+
+                if rainSize is not None:
+
+                    if rainSize == 1:
+
+                        rainmultiplier = 0.01
+
+                    elif rainSize == 2:
+
+                        rainmultiplier = 0.2
+
+                    elif rainSize == 3:
+
+                        rainmultiplier = 0.1
 
 
                 if rainFall_Daily is not None: 
@@ -416,58 +470,71 @@ class WLLDriver(weewx.drivers.AbstractDevice):
                            'inDewpoint' : inDewpoint,
                            }
 
+                if self.unit_db_input_data == weewx.METRIC or self.unit_db_input_data == weewx.METRICWX:
 
-                #logdbg("Values received in JSON from WLL : %s" % log_packet_before_transformed)
+                    if _packet_before['outTemp'] is not None:
 
-                if _packet_before['outTemp'] is not None:
+                        outTemp = (float(outTemp) - 32) * 5/9
+                        outTemp = round(outTemp,2)
 
-                    outTemp = (float(outTemp) - 32) * 5/9
-                    outTemp = round(outTemp,2)
+                    if _packet_before['dewpoint'] is not None:
 
-                if _packet_before['dewpoint'] is not None:
+                        dewpoint = (float(dewpoint) - 32) * 5/9
+                        dewpoint = round(dewpoint,2)
 
-                    dewpoint = (float(dewpoint) - 32) * 5/9
-                    dewpoint = round(dewpoint,2)
+                    if _packet_before['heatindex'] is not None:
 
-                if _packet_before['heatindex'] is not None:
+                        heatindex = (float(heatindex) - 32) * 5/9
+                        heatindex = round(heatindex,2)
 
-                    heatindex = (float(heatindex) - 32) * 5/9
-                    heatindex = round(heatindex,2)
+                    if _packet_before['windchill'] is not None:
 
-                if _packet_before['windchill'] is not None:
+                        windchill = (float(windchill) - 32) * 5/9
+                        windchill = round(windchill,2)
 
-                    windchill = (float(windchill) - 32) * 5/9
-                    windchill = round(windchill,2)
+                    if _packet_before['inTemp'] is not None:
 
-                if _packet_before['inTemp'] is not None:
+                        inTemp = (float(inTemp) - 32) * 5/9
+                        inTemp = round(inTemp,2)
 
-                    inTemp = (float(inTemp) - 32) * 5/9
-                    inTemp = round(inTemp,2)
+                    if _packet_before['inDewpoint'] is not None:
 
-                if _packet_before['inDewpoint'] is not None:
+                        inDewpoint = (float(inDewpoint) - 32) * 5/9
+                        inDewpoint = round(inDewpoint,2)
 
-                    inDewpoint = (float(inDewpoint) - 32) * 5/9
-                    inDewpoint = round(inDewpoint,2)
+                    if _packet_before['inDewpoint'] is not None:
+                    
+                        barometer = float(barometer) * 33.864
+                        barometer = round(barometer,2)
 
-                if _packet_before['inDewpoint'] is not None:
-                
-                    barometer = float(barometer) * 33.864
-                    barometer = round(barometer,2)
+                    if _packet_before['pressure'] is not None:
 
-                if _packet_before['pressure'] is not None:
-
-                    pressure = float(pressure) * 33.864
-                    pressure = round(pressure,2)
+                        pressure = float(pressure) * 33.864
+                        pressure = round(pressure,2)
 
                 if _packet_before['windSpeed'] is not None:
 
-                    windSpeed = float(windSpeed) / 2.237
-                    windSpeed = round(windSpeed,2)
+                    if self.unit_db_input_data == weewx.METRIC:
+
+                        windSpeed = float(windSpeed) * 1.609344
+                        windSpeed = round(windSpeed,2)
+
+                    if self.unit_db_input_data == weewx.METRICWX:
+
+                        windSpeed = float(windSpeed) / 2.237
+                        windSpeed = round(windSpeed,2)
 
                 if _packet_before['windGust'] is not None:
 
-                    windGust = float(windGust) / 2.237
-                    windGust = round(windGust,2)
+                    if self.unit_db_input_data == weewx.METRIC:
+
+                        windGust = float(windGust) * 1.609344
+                        windGust = round(windGust,2)
+
+                    if self.unit_db_input_data == weewx.METRICWX:
+
+                        windGust = float(windGust) / 2.237
+                        windGust = round(windGust,2)
 
                 if _packet_before['windDir'] is not None:
 
@@ -478,7 +545,7 @@ class WLLDriver(weewx.drivers.AbstractDevice):
                     windGustDir = round(windGustDir,0)
 
                 _packet = {'dateTime': int(time.time() + 0.5),
-                           'usUnits': weewx.METRICWX,
+                           'usUnits': self.unit_db_input_data,
                            'outTemp': outTemp,
                            'outHumidity': outHumidity,
                            'dewpoint': dewpoint,
