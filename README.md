@@ -1,4 +1,4 @@
-# WeatherLinkLive_Weewx
+# WLLDriver
 Created this driver to make request to WeatherLinkLive module including archive from Weatherlink.com when data be lost on Weewx.
 
 Configuration : 
