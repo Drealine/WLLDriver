@@ -3,7 +3,7 @@ Created this driver to make request to WeatherLinkLive module including archive 
 
 Configuration : 
 
-- Copy driver WLLDriver.py on /usr/share/weewx/user
+- Copy driver WLLDriver.py on /usr/share/weewx/user or user folder depend to your weewx installation
 - Change on weewx.conf station_type = WLLDriver
 - Know your station ID by following this link : https://weatherlink.github.io/v2-api/authentication
 default API request is : https://api.weatherlink.com/v2/stations?api-key=YOURAPIKEY&api-signature=YOURAPISIGNATURE&t=CURRENTTIMESTAMP
@@ -18,7 +18,7 @@ default API request is : https://api.weatherlink.com/v2/stations?api-key=YOURAPI
     url = http://toto.com:80/v1/current_conditions #Just replace toto.com by your IP.
     wl_apikey = NN #Create an API Key on your Weatherlink account
     wl_apisecret = NN #By creating API Key, you've also an API Secret
-    wl_stationid = NN  #You can view your station ID by following this link : 
+    wl_stationid = NN  #Check your station ID by using the method explain before
     wl_archive_interval = 5 #Be carefull by set this because it depending on your subscription on Weatherlink.com. Please use the same that config on weewx.conf
 ```
 
