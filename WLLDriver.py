@@ -502,6 +502,7 @@ class WLLDriver(weewx.drivers.AbstractDevice):
                     # got the data ok so reset the flag counter
                     logdbg("Packet received from WLL module {}:".format(_packet))
                     yield _packet
+                    self.ntries = 0
 
                 else:
                     
