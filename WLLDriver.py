@@ -69,6 +69,7 @@ class WLLDriver(weewx.drivers.AbstractDevice):
         self.product = "WeatherLinkLive"
         self.model = "WLLDriver"
         self.max_tries = int(stn_dict.get('max_tries', 5))
+        self.time_out = int(stn_dict.get('time_out', 10))
         self.retry_wait = int(stn_dict.get('retry_wait', 10))
         self.poll_interval = float(stn_dict.get('poll_interval', 2))
         self.url = stn_dict.get('url', TEST_URL)
@@ -161,8 +162,10 @@ class WLLDriver(weewx.drivers.AbstractDevice):
             logdbg("URL API Weatherlink is {} ".format(url_apiv2_wl))
 
             wl_session = requests.session()
-            data_request_url = wl_session.get(url_apiv2_wl)
+            data_request_url = wl_session.get(url_apiv2_wl, timeout=self.time_out)
+            logdbg("OK Wl 1")
             data_wl = data_request_url.json()
+            logdbg("OK Wl 2")
 
             start_timestamp = int(start_timestamp + (60 * self.wl_archive_interval))
             logdbg("StartTimeStamp is : %d" %start_timestamp)
@@ -382,8 +385,10 @@ class WLLDriver(weewx.drivers.AbstractDevice):
 
         try:
 
-            r = requests.get(url=self.url)
+            r = requests.get(url=self.url, timeout=self.time_out)
+            logdbg("OK Wll 1")
             data = r.json()
+            logdbg("OK Wll 2")
 
             if data['data'] == None:
 
