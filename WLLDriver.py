@@ -549,6 +549,18 @@ class WLLDriver(weewx.drivers.AbstractDevice):
 
                     windGustDir = round(windGustDir,0)
 
+                if _packet_before['rain'] is not None:
+
+                    if rainSize == 2 and self.unit_db_input_data == weewx.METRIC:
+
+                        rain_this_period = float(rain_this_period) / 10
+
+                if _packet_before['rainRate'] is not None:
+
+                    if rainSize == 2 and self.unit_db_input_data == weewx.METRIC:
+
+                        rainRate = float(rainRate) / 10
+
                 _packet = {'dateTime': int(time.time() + 0.5),
                            'usUnits': self.unit_db_input_data,
                            'outTemp': outTemp,
