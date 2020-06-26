@@ -20,6 +20,7 @@ default API request is : https://api.weatherlink.com/v2/stations?api-key=YOURAPI
     wl_apisecret = NN #By creating API Key, you've also an API Secret
     wl_stationid = NN  #Check your station ID by using the method explain before
     wl_archive_interval = 5 #Be carefull by set this because it depending on your subscription on Weatherlink.com. Please use the same that config on weewx.conf
+    time_out = 10 #Set this for timeout of Weatherlink.com and WLL module
 ```
 
 Credits : 
