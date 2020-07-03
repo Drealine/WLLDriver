@@ -7,7 +7,7 @@ Configuration :
 - Change on weewx.conf station_type = WLLDriver
 - Know your station ID by following this link : https://weatherlink.github.io/v2-api/authentication
 default API request is : https://api.weatherlink.com/v2/stations?api-key=YOURAPIKEY&api-signature=YOURAPISIGNATURE&t=CURRENTTIMESTAMP
-- Setting driver by set parameters at the end of weewx.conf: 
+- Set parameters as you want at the end of weewx.conf: 
 
 ```
 [WLLDriver]
