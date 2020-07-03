@@ -11,7 +11,6 @@ default API request is : https://api.weatherlink.com/v2/stations?api-key=YOURAPI
 
 ```
 [WLLDriver]
-    driver = user.WLLDriver
     max_tries #Max tries before Weewx raise an exception and finished the loop. Default : 100
     retry_wait #Time to retry in second between each. Default : 5
     poll_interval #The time to sleep in second between 2 requests. If you have enabled UDP please note that all sensor would be reach each poll_interval. Default : 10
@@ -20,8 +19,6 @@ default API request is : https://api.weatherlink.com/v2/stations?api-key=YOURAPI
     time_out #Set this for timeout in second of HTTP and UDP request. Default : 10
     device_id #Set the ID of your ISS that you've configured on the WLL Module. Ex : 1:iss. Default : 1:iss
     
-
-
 [WLLArchive]
     max_tries #Max tries before Weewx raise an exception and finished the loop. Default : 20
     retry_wait #Time to retry in second between each. Default : 5
