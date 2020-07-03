@@ -87,7 +87,7 @@ class WLLDriver(weewx.drivers.AbstractDevice):
         self.update_packet = None
 
         # Add for multiple sensor
-        device_id = (stn_dict.get('device_id',str("1-iss")))
+        device_id = (stn_dict.get('device_id',str("1:iss")))
         self.length_dict_device_id = None
 
         self.dict_device_id = dict((int(k), v) for k, v in (e.split(':') for e in device_id.split('-')))
