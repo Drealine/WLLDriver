@@ -352,7 +352,7 @@ class WLLDriver(weewx.drivers.AbstractDevice):
                         pressure = float(pressure) * 33.864
                         pressure = round(pressure,2)
 
-                elif type_of_packet == 'current_conditions' or 'realtime_broadcast':
+                if type_of_packet == 'current_conditions' or 'realtime_broadcast':
 
                     if windSpeed is not None:
 
