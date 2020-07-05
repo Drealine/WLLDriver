@@ -35,4 +35,5 @@ default API request is : https://api.weatherlink.com/v2/stations?api-key=YOURAPI
 Credits : 
 
 Thank to @vinceskahan on Github who give me examples to make this driver : https://github.com/vinceskahan/weewx-weatherlinklive-json
+
 Thank to @grebleem to work on the developpment for the WLL Module : https://github.com/grebleem/weewx-weatherlinkliveudp
