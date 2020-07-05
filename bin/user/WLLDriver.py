@@ -6,7 +6,7 @@ TEST_URL="http://192.168.1.18:80/v1/current_conditions"
 # and now for the driver itself......
 
 DRIVER_NAME = "WLLDriver"
-DRIVER_VERSION = "1"
+DRIVER_VERSION = "0.11"
 
 import json
 import requests
@@ -188,13 +188,13 @@ class WLLDriver(weewx.drivers.AbstractDevice):
 
                                                 windDir = s['wind_dir_last']
                                             
-                                            if 'wind_speed_hi_last_2_min' in s:
+                                            if 'wind_speed_hi_last_10_min' in s:
 
-                                                windGust = s['wind_speed_hi_last_2_min']
+                                                windGust = s['wind_speed_hi_last_10_min']
 
-                                            if 'wind_dir_scalar_avg_last_2_min' in s:
+                                            if 'wind_dir_scalar_avg_last_10_min' in s:
                                             
-                                                windGustDir = s['wind_dir_scalar_avg_last_2_min']
+                                                windGustDir = s['wind_dir_scalar_avg_last_10_min']
 
                                         if self.dict_device_id[device_id] == 'iss' or 'iss+' or 'extra_RainGauge':
 
