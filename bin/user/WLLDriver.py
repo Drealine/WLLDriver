@@ -6,7 +6,7 @@ TEST_URL="http://192.168.1.18:80/v1/current_conditions"
 # and now for the driver itself......
 
 DRIVER_NAME = "WLLDriver"
-DRIVER_VERSION = "0.11"
+DRIVER_VERSION = "0.1"
 
 import json
 import requests
