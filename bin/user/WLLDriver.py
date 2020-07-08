@@ -157,6 +157,7 @@ class WLLDriver(weewx.drivers.AbstractDevice):
             windGustDir = None
             barometer = None
             pressure = None
+            rain = None
             rainRate = None
             inTemp = None
             inHumidity = None
@@ -266,7 +267,9 @@ class WLLDriver(weewx.drivers.AbstractDevice):
 
                                                             if rainRate is not None:
 
-                                                                rainRate = float(rainRate) / 25.4
+                                                                if rainRate > 0:
+
+                                                                    rainRate = float(rainRate) / 25.4
 
                                                         if 'rainfall_mm' in s:
 
@@ -274,7 +277,9 @@ class WLLDriver(weewx.drivers.AbstractDevice):
 
                                                             if rain is not None:
 
-                                                                rain = float(rain) / 25.4
+                                                                if rain > 0:
+
+                                                                    rain = float(rain) / 25.4
 
                                                     #elif rainSize == 3:
 
@@ -385,9 +390,7 @@ class WLLDriver(weewx.drivers.AbstractDevice):
         windGustDir = None
         barometer = None
         pressure = None
-        rain = None
         rainRate = None
-        rainSize = None
         inTemp = None
         inHumidity = None
         inDewpoint = None
@@ -406,10 +409,6 @@ class WLLDriver(weewx.drivers.AbstractDevice):
                 length_dict_device_id = self.length_dict_device_id
 
                 while length_dict_device_id_count <= length_dict_device_id:
-
-                    logdbg(self.dict_device_id[device_id])
-
-                    logdbg('extraTemp{}'.format(length_dict_device_id_count))
 
                     if type_of_packet == 'current_conditions':
 
@@ -577,14 +576,16 @@ class WLLDriver(weewx.drivers.AbstractDevice):
             if self.rain_previous_period is not None:
                 rain_this_period = (rainFall_Daily - self.rain_previous_period) * rainmultiplier
 
-                if rainSize == 2:
+                if rain_this_period > 0:
 
-                    rain_this_period = rain_this_period / 25.4
+                    if rainSize == 2:
+
+                        rain_this_period = rain_this_period / 25.4
 
 
-                if rainSize == 3:
+                    if rainSize == 3:
 
-                    rain_this_period = rain_this_period / 2.54
+                        rain_this_period = rain_this_period / 2.54
 
                 self.rain_previous_period = rainFall_Daily
                 logdbg("Rain rightnow is :" + str(rain_this_period))
@@ -596,16 +597,18 @@ class WLLDriver(weewx.drivers.AbstractDevice):
 
         if rainRate is not None:
 
-            rainRate = rainRate * rainmultiplier
+            if rainRate > 0:
 
-            if rainSize == 2:
+                rainRate = rainRate * rainmultiplier
 
-                rainRate = float(rainRate) / 25.4
+                if rainSize == 2:
+
+                    rainRate = float(rainRate) / 25.4
 
 
-            if rainSize == 3:
+                if rainSize == 3:
 
-                rainRate = float(rainRate) / 2.54
+                    rainRate = float(rainRate) / 2.54
 
             logdbg("Set previous period rain to: " + str(self.rain_previous_period))
 
@@ -825,6 +828,7 @@ class WLLDriver(weewx.drivers.AbstractDevice):
 
                         yield _packet_wl
                         good_stamp = time.time() + 0.5
+                        self.ntries = 1
 
                 else:
 
