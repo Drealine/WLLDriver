@@ -390,7 +390,6 @@ class WLLDriver(weewx.drivers.AbstractDevice):
         windGustDir = None
         barometer = None
         pressure = None
-        rainRate = None
         inTemp = None
         inHumidity = None
         inDewpoint = None
@@ -595,6 +594,8 @@ class WLLDriver(weewx.drivers.AbstractDevice):
                 self.rain_previous_period = rainFall_Daily
                 logdbg("Rainfall set by WLLDriver")
 
+            logdbg("Set previous period rain to: " + str(self.rain_previous_period))
+
         if rainRate is not None:
 
             if rainRate > 0:
@@ -603,14 +604,14 @@ class WLLDriver(weewx.drivers.AbstractDevice):
 
                 if rainSize == 2:
 
-                    rainRate = float(rainRate) / 25.4
+                    rainRate = rainRate / 25.4
 
 
                 if rainSize == 3:
 
-                    rainRate = float(rainRate) / 2.54
+                    rainRate = rainRate / 2.54
 
-            logdbg("Set previous period rain to: " + str(self.rain_previous_period))
+                logdbg("rainRate rightnow is : {}".format(rainRate))
 
 
         if type_of_packet == 'current_conditions':
