@@ -390,6 +390,7 @@ class WLLDriver(weewx.drivers.AbstractDevice):
         windGustDir = None
         barometer = None
         pressure = None
+        rainRate = None
         inTemp = None
         inHumidity = None
         inDewpoint = None
